@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: kovan-growth-wechat-web
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: TIMEZONE
+        value: Asia/Shanghai
+      - key: PLAN_START_DATE
+        value: 2026-06-01
+      - key: OPENAI_MODEL
+        value: gpt-5.4-mini
+      - key: WECHAT_VERIFY_TOKEN
+        sync: false
+
+  - type: worker
+    name: kovan-growth-wechat-worker
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m personal_growth_push run
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: TIMEZONE
+        value: Asia/Shanghai
+      - key: PLAN_START_DATE
+        value: 2026-06-01
+      - key: OPENAI_MODEL
+        value: gpt-5.4-mini
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: WECHAT_APP_ID
+        sync: false
+      - key: WECHAT_APP_SECRET
+        sync: false
+      - key: WECHAT_OPENIDS
+        sync: false
+      - key: WECHAT_TEMPLATE_ID
+        sync: false
+      - key: WECHAT_VERIFY_TOKEN
+        sync: false
